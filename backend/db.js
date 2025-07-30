@@ -15,7 +15,7 @@ const ObjectId = Schema.ObjectId;
 
 const userSchema = new Schema({
     email : { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password_hash: { type: String, required: true },
     created_at: { type: Date, default: Date.now },
 })
 
@@ -31,6 +31,6 @@ const sessionSchema = new Schema({
 })
 
 
-const Usermodel = mongoose.model('User', userSchema);
-const Sessionmodel = mongoose.model('Session', sessionSchema);
-module.exports = { Usermodel, Sessionmodel };
+const User = mongoose.model('User', userSchema);
+const Session = mongoose.model('Session', sessionSchema);
+module.exports = { User, Session };
