@@ -93,11 +93,39 @@ async function publishSession(req, res) {
     });
 };
 
+async function updateSession(req, res) {
+    const sessionId = req.params.id;
+    const updateFields = req.body;
+
+    console.log("Update fields:", updateFields);
+
+    if (!sessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+    }
+
+
+    const session = await Session.findOneAndUpdate(
+        { _id: sessionId , user_id: req.userId },
+        { $set: updateFields },
+        { new: true }
+    );
+
+    if (!session) {
+        return res.status(404).json({ message: "Session not found " });
+    }
+
+    res.json({
+        message: "Session updated successfully",
+        data: session
+    });
+}
+
+
 module.exports = {
     getAllSessions,
     mySessions,
     getSessionById,
     saveDraft,
-    publishSession
-
+    publishSession,
+    updateSession
 };
