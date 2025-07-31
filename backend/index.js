@@ -2,7 +2,9 @@ const express = require('express')
 const app = express();
 const sessionRouter = require('./routes/sessionRoutes');
 const authRouter = require('./routes/authRoutes');
+const cors = require('cors');
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", sessionRouter);
