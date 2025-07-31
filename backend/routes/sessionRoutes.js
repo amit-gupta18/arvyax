@@ -1,6 +1,6 @@
 const express = require('express');
 const sessionRouter = express.Router();
-const authMiddleware = require('../middleware/authmiddleware');
+const authMiddleware = require('../middleware/authMiddleware');
 const { User, Session } = require('../db');
 const { getAllSessions , mySessions , getSessionById , saveDraft , publishSession , updateSession} = require('../controller/sessionController');
 

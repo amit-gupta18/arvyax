@@ -1,5 +1,5 @@
 const {Session , User} = require('../db');
-const authMiddleware = require('../middleware/authmiddleware');
+const authMiddleware = require('../middleware/authMiddleware');
 
 async function getAllSessions(req, res) {
     const allPublishedSessions = await Session.find({ status: 'published' });
