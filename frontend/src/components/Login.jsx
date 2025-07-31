@@ -8,7 +8,7 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -17,15 +17,13 @@ function Login() {
             const res = await axios.post(`${baseUrl}/api/v1/auth/login`, {
                 email,
                 password,
-            })
-
-            const token = res.data.token
-            localStorage.setItem('token', token)
-            navigate('/dashboard')
-            // window.location.href = '/dashboard'
+            });
+            const token = res.data.token;
+            localStorage.setItem('token', token);
+            window.location.href = '/dashboard';
 
         } catch (err) {
-            console.error(err)
+            console.error(err);
         }
     }
 
@@ -53,7 +51,7 @@ function Login() {
                     />
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                        className="w-full bg-blue-500 text-white py-2 rounded cursor-pointer hover:bg-blue-600"
                     >
                         Login
                     </button>
