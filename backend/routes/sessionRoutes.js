@@ -2,99 +2,22 @@ const express = require('express');
 const sessionRouter = express.Router();
 const authMiddleware = require('../middleware/authmiddleware');
 const { User, Session } = require('../db');
+const { getAllSessions , mySessions , getSessionById , saveDraft , publishSession} = require('../controller/sessionController');
 
-sessionRouter.get('/sessions', async (req, res) => {
+sessionRouter.get('/sessions', getAllSessions);
 
-    const allPublishedSessions = await Session.find({ status: 'published' });
 
-    res.json({
-        sessions: allPublishedSessions,
-        message: "This is the sessions route"
-    });
-});
+sessionRouter.get('/my-sessions', authMiddleware , mySessions);
 
-sessionRouter.get('/my-sessions', authMiddleware , async (req, res) => {
-    const mySessions = await Session.find({ user_id: req.userId });
 
-    if (!mySessions || mySessions.length === 0) {
-        return res.status(404).json({ message: "No sessions found for this user" });
-    }
-
-    res.json({
-        sessions: mySessions,
-        message: "This is the my-sessions route"
-    });
-});
-
-sessionRouter.get('/my-sessions/:id', authMiddleware, async (req, res) => {
-    const sessionId = req.params.id;
-
-    const session = await Session.findOne({ _id: sessionId, user_id: req.userId });
-
-    if (!session) {
-        return res.status(404).json({ message: "Session not found" });
-    }
-
-    res.json({
-        session: session,
-        message: `This is the session with id ${sessionId}`
-    });
-});
-
-sessionRouter.post('/my-sessions/save-draft', authMiddleware, async (req, res) => {
-    const { title, tags, json_file_url, status } = req.body;
-
-    if (!title || !tags || !json_file_url) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
-
-    // save the draft to the database . 
-    await Session.create({
-        user_id: req.userId,
-        title,
-        tags,
-        json_file_url,
-        status: status || 'draft',
-        created_at: new Date(),
-        updated_at: new Date()
-    });
+sessionRouter.get('/my-sessions/:id', authMiddleware, getSessionById);
 
 
 
-    res.json({
-        message: "Draft saved successfully",
-        data: {
-            title,
-            tags,
-            json_file_url
-        }
-    });
-});
+sessionRouter.post('/my-sessions/save-draft', authMiddleware, saveDraft);
 
 
-sessionRouter.post('/my-sessions/publish', authMiddleware, async (req, res) => {
-    const { id } = req.body;
 
-    if (!id) {
-        return res.status(400).json({ message: "Session ID is required" });
-    }
-
-    const session = await Session.findById({ userId: req.userId , _id: id });
-
-    if (!session) {
-        return res.status(404).json({ message: "Session not found" });
-    }
-
-    const updateStatus = await Session.updateOne(
-        { _id: id, user_id: req.userId },
-        { status: 'published', updated_at: new Date() }
-    );
-    if (updateStatus.modifiedCount === 0) {
-        return res.status(500).json({ message: "Failed to publish session" });
-    }
-    res.json({
-        message: "Session published successfully",
-    });
-});
+sessionRouter.post('/my-sessions/publish', authMiddleware, publishSession);
 
 module.exports = sessionRouter;
