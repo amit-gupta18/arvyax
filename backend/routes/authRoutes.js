@@ -4,7 +4,6 @@ const { User , Session } = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
 authRouter.post("/register", async (req, res) => {
     const { email , password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
