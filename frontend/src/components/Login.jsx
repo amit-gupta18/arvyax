@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import Loader from './Loader'
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
-
 
 function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
     // const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true)
 
         try {
             const res = await axios.post(`${baseUrl}/api/v1/auth/login`, {
@@ -21,9 +23,10 @@ function Login() {
             const token = res.data.token;
             localStorage.setItem('token', token);
             window.location.href = '/dashboard';
-
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -51,11 +54,11 @@ function Login() {
                     />
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded cursor-pointer hover:bg-blue-600"
+                        className="w-full bg-blue-500 text-white py-2 rounded cursor-pointer hover:bg-blue-600 flex items-center justify-center"
+                        disabled={loading}
                     >
-                        Login
+                        {loading ? <Loader size={18} /> : "Login"}
                     </button>
-
                 </form>
 
                 <p className="mt-4 text-center">
